@@ -87,161 +87,139 @@ bool trig[D_NUM];
 #ifdef CALIBRATE
 void calcMaxMin(int drum)
 {
-  int8_t max = 0;
-  int8_t min = 0;
-  int num_cells;
-  int8_t *pData;
-  switch (drum)
-  {
-  case D_BD:
-    num_cells = BD_NUM_CELLS;
-    pData = (int8_t *)&BD_DATA[0];
-    break;
-  case D_SD:
-    num_cells = SD_NUM_CELLS;
-    pData = (int8_t *)&SD_DATA[0];
-    break;
-  case D_CH:
-    num_cells = CH_NUM_CELLS;
-    pData = (int8_t *)&CH_DATA[0];
-    break;
-  case D_OH:
-    num_cells = OH_NUM_CELLS;
-    pData = (int8_t *)&OH_DATA[0];
-    break;
-  default:
-    Serial.print("Unknown drum on calibration\n");
-    return;
-  }
-  for (int i = 0; i < num_cells; i++)
-  {
-    int8_t val = pgm_read_byte_near(pData + i);
-    if (val > max)
-      max = val;
-    if (val < min)
-      min = val;
-  }
-  Serial.print("Data for drum on pin ");
-  Serial.print(drum);
-  Serial.print(":\tMax: ");
-  Serial.print(max);
-  Serial.print("\tMin: ");
-  Serial.println(min);
+    int8_t max = 0;
+    int8_t min = 0;
+    int num_cells;
+    int8_t *pData;
+    switch (drum)
+    {
+    case D_BD:
+        num_cells = BD_NUM_CELLS;
+        pData = (int8_t *)&BD_DATA[0];
+        break;
+    case D_SD:
+        num_cells = SD_NUM_CELLS;
+        pData = (int8_t *)&SD_DATA[0];
+        break;
+    case D_CH:
+        num_cells = CH_NUM_CELLS;
+        pData = (int8_t *)&CH_DATA[0];
+        break;
+    case D_OH:
+        num_cells = OH_NUM_CELLS;
+        pData = (int8_t *)&OH_DATA[0];
+        break;
+    default:
+        Serial.print("Unknown drum on calibration\n");
+        return;
+    }
+    for (int i = 0; i < num_cells; i++)
+    {
+        int8_t val = pgm_read_byte_near(pData + i);
+        if (val > max)
+            max = val;
+        if (val < min)
+            min = val;
+    }
+    Serial.print("Data for drum on pin ");
+    Serial.print(drum);
+    Serial.print(":\tMax: ");
+    Serial.print(max);
+    Serial.print("\tMin: ");
+    Serial.println(min);
 }
 #endif
 
 void startDrum(int drum)
 {
-  switch (drum)
-  {
-  case D_BD:
-    aBD.start();
-    break;
-  case D_SD:
-    aSD.start();
-    break;
-  case D_CH:
-    aCH.start();
-    break;
-  case D_OH:
-    aOH.start();
-    break;
-  }
+    switch (drum)
+    {
+    case D_BD:
+        aBD.start();
+        break;
+    case D_SD:
+        aSD.start();
+        break;
+    case D_CH:
+        aCH.start();
+        break;
+    case D_OH:
+        aOH.start();
+        break;
+    }
 }
 
 unsigned long millitime;
 void ledOff()
 {
-  if (millitime < millis())
-  {
-    digitalWrite(TRIG_LED, LOW);
-  }
+    if (millitime < millis())
+    {
+        digitalWrite(TRIG_LED, LOW);
+    }
 }
 
 void ledOn()
 {
-  millitime = millis() + LED_ON_TIME;
-  digitalWrite(TRIG_LED, HIGH);
+    millitime = millis() + LED_ON_TIME;
+    digitalWrite(TRIG_LED, HIGH);
 }
 
 void setup()
 {
-  pinMode(TRIG_LED, OUTPUT);
-  ledOff();
-  for (int i = 0; i < D_NUM; i++)
-  {
-    pinMode(d_pins[i], INPUT_PULLUP);
-  }
-  startMozzi();
-  // Initialise all samples to play at the speed it was recorded
-  aBD.setFreq((float)D_SAMPLERATE / (float)BD_NUM_CELLS);
-  aSD.setFreq((float)D_SAMPLERATE / (float)SD_NUM_CELLS);
-  aCH.setFreq((float)D_SAMPLERATE / (float)CH_NUM_CELLS);
-  aOH.setFreq((float)D_SAMPLERATE / (float)OH_NUM_CELLS);
+    pinMode(TRIG_LED, OUTPUT);
+    ledOff();
+    for (int i = 0; i < D_NUM; i++)
+    {
+        pinMode(d_pins[i], INPUT_PULLUP);
+    }
+    startMozzi();
+    // Initialise all samples to play at the speed it was recorded
+    aBD.setFreq((float)D_SAMPLERATE / (float)BD_NUM_CELLS);
+    aSD.setFreq((float)D_SAMPLERATE / (float)SD_NUM_CELLS);
+    aCH.setFreq((float)D_SAMPLERATE / (float)CH_NUM_CELLS);
+    aOH.setFreq((float)D_SAMPLERATE / (float)OH_NUM_CELLS);
 
 #ifdef CALIBRATE
-  Serial.begin(9600);
-  calcMaxMin(D_BD);
-  calcMaxMin(D_SD);
-  calcMaxMin(D_CH);
-  calcMaxMin(D_OH);
+    Serial.begin(9600);
+    calcMaxMin(D_BD);
+    calcMaxMin(D_SD);
+    calcMaxMin(D_CH);
+    calcMaxMin(D_OH);
 #endif
 }
 
-// int drumScan;
-// void updateControl()
-// {
-//   if (!digitalRead(d_pins[drumScan]))
-//   {
-//     if (!trig[drumScan])
-//     {
-//       ledOn();
-//       startDrum(d_pins[drumScan]);
-//       trig[drumScan] = true;
-//     }
-//   }
-//   else
-//   {
-//     trig[drumScan] = false;
-//   }
-//   drumScan++;
-//   if (drumScan >= D_NUM)
-//     drumScan = 0;
-//   ledOff();
-// }
-
 void updateControl()
 {
-  static uint32_t last_millis = 0;
-  static uint8_t drum = 0;
+    static uint32_t last_millis = 0;
+    static uint8_t drum = 0;
 
-  uint32_t curr_time = millis();
+    uint32_t curr_time = millis();
 
-  if ((curr_time - last_millis) > 500)
-  {
-    ledOn();
-    startDrum(drum);
-    last_millis = curr_time;
-  }
+    if ((curr_time - last_millis) > 500)
+    {
+        ledOn();
+        startDrum(drum);
+        last_millis = curr_time;
+    }
 
-  drum++;
-  if (drum > 3)
-  {
-    drum = 0;
-  }
+    drum++;
+    if (drum > 3)
+    {
+        drum = 0;
+    }
 }
 
 AudioOutput_t updateAudio()
 {
-  // Need to add together all the sample sources.
-  // We down-convert using the scaling factor worked out
-  // for our specific sample set from running in "CALIBRATE" mode.
-  //
-  int16_t d_sample = aBD.next() + aSD.next() + aCH.next() + aOH.next();
-  return MonoOutput::fromNBit(OUTPUTSCALING, d_sample);
+    // Need to add together all the sample sources.
+    // We down-convert using the scaling factor worked out
+    // for our specific sample set from running in "CALIBRATE" mode.
+    //
+    int16_t d_sample = aBD.next() + aSD.next() + aCH.next() + aOH.next();
+    return MonoOutput::fromNBit(OUTPUTSCALING, d_sample);
 }
 
 void loop()
 {
-  audioHook();
+    audioHook();
 }
