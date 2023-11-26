@@ -36,6 +36,8 @@
 */
 #include <MozziGuts.h>
 #include <Sample.h> // Sample template
+
+#include "HeaderMatrix.hpp"
 #include "d_kit.h"
 
 // Uncomment to output max/min values of the samples for calibration purposes
@@ -72,67 +74,21 @@
 #define D_SD 1
 #define D_CH 2
 #define D_OH 3
-int d_pins[D_NUM] = {D_BD, D_SD, D_OH, D_CH};
+int d_pins[ D_NUM ] = { D_BD, D_SD, D_OH, D_CH };
 
 // use: Sample <table_size, update_rate> SampleName (wavetable)
-Sample<BD_NUM_CELLS, AUDIO_RATE> aBD(BD_DATA);
-Sample<SD_NUM_CELLS, AUDIO_RATE> aSD(SD_DATA);
-Sample<CH_NUM_CELLS, AUDIO_RATE> aCH(CH_DATA);
-Sample<OH_NUM_CELLS, AUDIO_RATE> aOH(OH_DATA);
+Sample<BD_NUM_CELLS, AUDIO_RATE> aBD( BD_DATA );
+Sample<SD_NUM_CELLS, AUDIO_RATE> aSD( SD_DATA );
+Sample<CH_NUM_CELLS, AUDIO_RATE> aCH( CH_DATA );
+Sample<OH_NUM_CELLS, AUDIO_RATE> aOH( OH_DATA );
 
 #define TRIG_LED LED_BUILTIN
 #define LED_ON_TIME 300 // On time in mS
-bool trig[D_NUM];
+bool trig[ D_NUM ];
 
-#ifdef CALIBRATE
-void calcMaxMin(int drum)
+void startDrum( int drum )
 {
-    int8_t max = 0;
-    int8_t min = 0;
-    int num_cells;
-    int8_t *pData;
-    switch (drum)
-    {
-    case D_BD:
-        num_cells = BD_NUM_CELLS;
-        pData = (int8_t *)&BD_DATA[0];
-        break;
-    case D_SD:
-        num_cells = SD_NUM_CELLS;
-        pData = (int8_t *)&SD_DATA[0];
-        break;
-    case D_CH:
-        num_cells = CH_NUM_CELLS;
-        pData = (int8_t *)&CH_DATA[0];
-        break;
-    case D_OH:
-        num_cells = OH_NUM_CELLS;
-        pData = (int8_t *)&OH_DATA[0];
-        break;
-    default:
-        Serial.print("Unknown drum on calibration\n");
-        return;
-    }
-    for (int i = 0; i < num_cells; i++)
-    {
-        int8_t val = pgm_read_byte_near(pData + i);
-        if (val > max)
-            max = val;
-        if (val < min)
-            min = val;
-    }
-    Serial.print("Data for drum on pin ");
-    Serial.print(drum);
-    Serial.print(":\tMax: ");
-    Serial.print(max);
-    Serial.print("\tMin: ");
-    Serial.println(min);
-}
-#endif
-
-void startDrum(int drum)
-{
-    switch (drum)
+    switch( drum )
     {
     case D_BD:
         aBD.start();
@@ -152,60 +108,79 @@ void startDrum(int drum)
 unsigned long millitime;
 void ledOff()
 {
-    if (millitime < millis())
+    if( millitime < millis() )
     {
-        digitalWrite(TRIG_LED, LOW);
+        digitalWrite( TRIG_LED, LOW );
     }
 }
 
 void ledOn()
 {
     millitime = millis() + LED_ON_TIME;
-    digitalWrite(TRIG_LED, HIGH);
+    digitalWrite( TRIG_LED, HIGH );
 }
 
 void setup()
 {
-    pinMode(TRIG_LED, OUTPUT);
+    Serial.begin( 115200 );
+
+    pinMode( TRIG_LED, OUTPUT );
     ledOff();
-    for (int i = 0; i < D_NUM; i++)
+    for( int i = 0; i < D_NUM; i++ )
     {
-        pinMode(d_pins[i], INPUT_PULLUP);
+        pinMode( d_pins[ i ], INPUT_PULLUP );
     }
     startMozzi();
     // Initialise all samples to play at the speed it was recorded
-    aBD.setFreq((float)D_SAMPLERATE / (float)BD_NUM_CELLS);
-    aSD.setFreq((float)D_SAMPLERATE / (float)SD_NUM_CELLS);
-    aCH.setFreq((float)D_SAMPLERATE / (float)CH_NUM_CELLS);
-    aOH.setFreq((float)D_SAMPLERATE / (float)OH_NUM_CELLS);
+    aBD.setFreq( ( float )D_SAMPLERATE / ( float )BD_NUM_CELLS );
+    aSD.setFreq( ( float )D_SAMPLERATE / ( float )SD_NUM_CELLS );
+    aCH.setFreq( ( float )D_SAMPLERATE / ( float )CH_NUM_CELLS );
+    aOH.setFreq( ( float )D_SAMPLERATE / ( float )OH_NUM_CELLS );
+
+    HeaderMatrix_init();
+
+    Serial.println( "Hello!" );
 
 #ifdef CALIBRATE
-    Serial.begin(9600);
-    calcMaxMin(D_BD);
-    calcMaxMin(D_SD);
-    calcMaxMin(D_CH);
-    calcMaxMin(D_OH);
+    Serial.begin( 9600 );
+    calcMaxMin( D_BD );
+    calcMaxMin( D_SD );
+    calcMaxMin( D_CH );
+    calcMaxMin( D_OH );
 #endif
 }
 
 void updateControl()
 {
-    static uint32_t last_millis = 0;
-    static uint8_t drum = 0;
+    // static uint32_t last_millis = 0;
+    // static uint8_t drum = 0;
 
+    // uint32_t curr_time = millis();
+
+    // if ((curr_time - last_millis) > 500)
+    // {
+    //     ledOn();
+    //     startDrum(drum);
+    //     last_millis = curr_time;
+    // }
+
+    // drum++;
+    // if (drum > 3)
+    // {
+    //     drum = 0;
+    // }
+
+    static uint32_t last_print = 0;
     uint32_t curr_time = millis();
 
-    if ((curr_time - last_millis) > 500)
+    if( ( curr_time - last_print ) > 100 )
     {
-        ledOn();
-        startDrum(drum);
-        last_millis = curr_time;
-    }
-
-    drum++;
-    if (drum > 3)
-    {
-        drum = 0;
+        uint32_t col_0_reading = HeaderMatrix_readCol( col_selc_pin_arr[ 0 ] );
+        uint32_t col_1_reading = HeaderMatrix_readCol( col_selc_pin_arr[ 1 ] );
+        Serial.printf( "Col 0 Output: %i %i\n", bitRead( col_0_reading, 0 ), bitRead( col_0_reading, 1 ) );
+        Serial.printf( "Col 1 Output: %i %i\n", bitRead( col_1_reading, 0 ), bitRead( col_1_reading, 1 ) );
+        Serial.println( "" );
+        last_print = curr_time;
     }
 }
 
@@ -216,7 +191,7 @@ AudioOutput_t updateAudio()
     // for our specific sample set from running in "CALIBRATE" mode.
     //
     int16_t d_sample = aBD.next() + aSD.next() + aCH.next() + aOH.next();
-    return MonoOutput::fromNBit(OUTPUTSCALING, d_sample);
+    return MonoOutput::fromNBit( OUTPUTSCALING, d_sample );
 }
 
 void loop()
