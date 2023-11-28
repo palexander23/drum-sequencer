@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 const pin_size_t col_selc_pin_arr[ HEADER_MATRIX_NUM_COLS ] = { 1, 2 };
-const pin_size_t row_read_pin_arr[ HEADER_MATRIX_NUM_COLS ] = { 3, 4 };
+const pin_size_t row_read_pin_arr[ HEADER_MATRIX_NUM_ROWS ] = { 3, 4 };
 
 /**
  * @brief Initialize all hardware required for the button Matrix
@@ -48,7 +48,7 @@ uint32_t HeaderMatrix_readCol( uint8_t col )
     int i;
     for( i = 0; i < HEADER_MATRIX_NUM_ROWS; i++ )
     {
-        col_value |= ( digitalRead( row_read_pin_arr[ i ] ) ) << i;
+        bitWrite( col_value, i, digitalRead( row_read_pin_arr[ i ] ) == LOW );
     }
 
     digitalWrite( col, HIGH );
