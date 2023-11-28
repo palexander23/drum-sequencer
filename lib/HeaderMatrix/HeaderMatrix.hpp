@@ -23,3 +23,4 @@ void HeaderMatrix_init();
 
 uint32_t HeaderMatrix_readCol( uint8_t col );
 void HeaderMatrix_readMatrix( uint32_t* matrix );
+void HeaderMatrix_PrintMatrix( void );

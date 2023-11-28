@@ -170,17 +170,13 @@ void updateControl()
     //     drum = 0;
     // }
 
-    static uint32_t last_print = 0;
-    uint32_t curr_time = millis();
+    static uint32_t lastPrintTimeMs = 0;
+    uint32_t currTimeMs = millis();
 
-    if( ( curr_time - last_print ) > 100 )
+    if( ( currTimeMs - lastPrintTimeMs ) > 100 )
     {
-        uint32_t col_0_reading = HeaderMatrix_readCol( col_selc_pin_arr[ 0 ] );
-        uint32_t col_1_reading = HeaderMatrix_readCol( col_selc_pin_arr[ 1 ] );
-        Serial.printf( "Col 0 Output: %i %i\n", bitRead( col_0_reading, 0 ), bitRead( col_0_reading, 1 ) );
-        Serial.printf( "Col 1 Output: %i %i\n", bitRead( col_1_reading, 0 ), bitRead( col_1_reading, 1 ) );
-        Serial.println( "" );
-        last_print = curr_time;
+        HeaderMatrix_PrintMatrix();
+        lastPrintTimeMs = currTimeMs;
     }
 }
 

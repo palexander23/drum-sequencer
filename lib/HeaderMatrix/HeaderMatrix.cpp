@@ -42,7 +42,7 @@ uint32_t HeaderMatrix_readCol( uint8_t col )
     uint32_t col_value = 0;
 
     // Select the column to read
-    digitalWrite( col, LOW );
+    digitalWrite( col_selc_pin_arr[ col ], LOW );
 
     // Read each of the rows into the output value
     int i;
@@ -51,9 +51,37 @@ uint32_t HeaderMatrix_readCol( uint8_t col )
         bitWrite( col_value, i, digitalRead( row_read_pin_arr[ i ] ) == LOW );
     }
 
-    digitalWrite( col, HIGH );
+    digitalWrite( col_selc_pin_arr[ col ], HIGH );
 
     return col_value;
 }
 
 void HeaderMatrix_readMatrix( uint32_t* matrix ) { }
+
+void HeaderMatrix_PrintMatrix( void )
+{
+    uint32_t currentCol;
+    uint32_t matrixArr[ HEADER_MATRIX_NUM_COLS ][ HEADER_MATRIX_NUM_ROWS ] = { 0 };
+
+    int col, row;
+    for( col = 0; col < HEADER_MATRIX_NUM_COLS; col++ )
+    {
+        currentCol = HeaderMatrix_readCol( col );
+
+        for( row = 0; row < HEADER_MATRIX_NUM_ROWS; row++ )
+        {
+            matrixArr[ col ][ row ] = bitRead( currentCol, row );
+        }
+    }
+
+    Serial.println( "---------------" );
+    for( col = 0; col < HEADER_MATRIX_NUM_COLS; col++ )
+    {
+        for( row = 0; row < HEADER_MATRIX_NUM_ROWS; row++ )
+        {
+            Serial.printf( "%i, ", matrixArr[ row ][ col ] );
+        }
+        Serial.println();
+    }
+    Serial.println( "---------------\n\r" );
+}
