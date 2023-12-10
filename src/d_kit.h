@@ -33,7 +33,7 @@
 
 #define BD_NUM_CELLS 2046
 
-CONSTTABLE_STORAGE(int8_t)
+CONSTTABLE_STORAGE( int8_t )
 BD_DATA[] = {
     0,
     0,
@@ -2085,7 +2085,7 @@ BD_DATA[] = {
 
 #define SD_NUM_CELLS 4108
 
-CONSTTABLE_STORAGE(int8_t)
+CONSTTABLE_STORAGE( int8_t )
 SD_DATA[] = {
     0,
     0,
@@ -6199,7 +6199,7 @@ SD_DATA[] = {
 
 #define CH_NUM_CELLS 986
 
-CONSTTABLE_STORAGE(int8_t)
+CONSTTABLE_STORAGE( int8_t )
 CH_DATA[] = {
     12,
     -12,
@@ -7191,7 +7191,7 @@ CH_DATA[] = {
 
 #define OH_NUM_CELLS 7374
 
-CONSTTABLE_STORAGE(int8_t)
+CONSTTABLE_STORAGE( int8_t )
 OH_DATA[] = {
     9,
     -19,
