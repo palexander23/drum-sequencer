@@ -17,6 +17,7 @@
 
 #include "DrumKit.hpp"
 #include "HeaderMatrix.hpp"
+#include "LEDTicker.hpp"
 #include "SpeedControl.hpp"
 
 //-----------------------------------------------------------------
@@ -61,6 +62,7 @@ void runBeat( void );
 uint8_t currentBeat;
 uint8_t currentSequence;
 EventDelay beatEventDelay;
+uint32_t beatLen_ms = SpeedControl_getBeatLen_ms();
 
 //=================================================================
 //-----------------------------------------------------------------
@@ -123,6 +125,24 @@ void runBeat( void )
         }
     }
 
+    if( currentBeat == 0 )
+    {
+        if( currentSequence == 0 )
+        {
+            LEDTicker_set( beatLen_ms / 2 );
+        }
+        if( currentSequence == 1 )
+        {
+            LEDTicker_set( beatLen_ms / 4 );
+        }
+    }
+    else if( currentBeat % 2 == 0 )
+    {
+        LEDTicker_set( 1 );
+    }
+
+    LEDTicker_run();
+
     incrementCurrentBeat();
 }
 
@@ -144,7 +164,9 @@ void Sequencer_run()
     if( beatEventDelay.ready() )
     {
         runBeat();
-        beatEventDelay.start( SpeedControl_getBeatLen_ms() );
+
+        beatLen_ms = SpeedControl_getBeatLen_ms();
+        beatEventDelay.start( beatLen_ms );
     }
 }
 

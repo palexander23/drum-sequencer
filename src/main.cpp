@@ -49,6 +49,7 @@
 
 #include "DrumKit.hpp"
 #include "HeaderMatrix.hpp"
+#include "LEDTicker.hpp"
 #include "Sequencer.hpp"
 #include "SpeedControl.hpp"
 
@@ -94,6 +95,7 @@ void setup()
     HeaderMatrix_init();
     Sequencer_init();
     SpeedControl_init();
+    LEDTicker_init();
 
     startMozzi();
 
@@ -113,6 +115,7 @@ AudioOutput_t updateAudio()
 
 void loop()
 {
+    LEDTicker_run();
     audioHook();
 }
 
