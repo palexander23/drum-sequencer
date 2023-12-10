@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#include <DrumKit.hpp>
+
 //-----------------------------------------------------------------
 // Includes
 //-----------------------------------------------------------------
@@ -37,9 +39,25 @@ extern const uint8_t row_read_pin_arr[ HEADER_MATRIX_NUM_ROWS ];
 
 #define BASSD_1_ROW 0
 #define SNARE_1_ROW 1
-#define HIHAT_1_ROW 2
-#define CRASH_1_ROW 3
+#define HHATC_1_ROW 2
+#define HHATO_1_ROW 3
 #define BASSD_2_ROW 4
+
+const uint8_t drum_row_num_arr[ HEADER_MATRIX_NUM_ROWS ] = {
+    BASSD_1_ROW,
+    SNARE_1_ROW,
+    HHATC_1_ROW,
+    HHATO_1_ROW,
+    BASSD_2_ROW,
+};
+
+const drum_t drum_row_sounds_arr[ HEADER_MATRIX_NUM_ROWS ] {
+    BASSD,
+    SNARE,
+    HHATC,
+    HHATO,
+    BASSD
+};
 
 //-----------------------------------------------------------------
 // Type Definitions

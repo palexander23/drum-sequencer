@@ -15,15 +15,19 @@
 #include <Arduino.h>
 #include <EventDelay.h>
 
+#include "DrumKit.hpp"
 #include "HeaderMatrix.hpp"
 
 //-----------------------------------------------------------------
 // Constant Definitions
 //-----------------------------------------------------------------
 
-#define SEQUENCER_DEFAULT_BEAT_LENGTH_MS 100
+#define SEQUENCER_DEFAULT_BEAT_LENGTH_MS 200
 
 #define SEQUENCER_NUM_SEQUENCES 2
+
+#define SEQUENCER_SEQUENCE_1_LAST_ROW 4
+#define SEQUENCER_SEQUENCE_2_LAST_ROW 5
 
 //-----------------------------------------------------------------
 // Type Definitions
@@ -87,6 +91,19 @@ void printSequenceInfoLine( void )
 void runBeat( void )
 {
     printSequenceInfoLine();
+
+    uint32_t currBeatHeaderSettings = HeaderMatrix_readCol( currentBeat );
+
+    int drumRow;
+    for( drumRow = 0; drumRow < SEQUENCER_SEQUENCE_1_LAST_ROW; drumRow++ )
+    {
+        bool drumSet = bitRead( currBeatHeaderSettings, drumRow );
+
+        if( drumSet )
+        {
+            DrumKit_play( drum_row_sounds_arr[ drumRow ] );
+        }
+    }
 
     incrementCurrentBeat();
 }
