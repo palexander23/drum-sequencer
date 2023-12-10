@@ -173,7 +173,7 @@ void updateControl()
     static uint32_t lastPrintTimeMs = 0;
     uint32_t currTimeMs = millis();
 
-    if( ( currTimeMs - lastPrintTimeMs ) > 100 )
+    if( ( currTimeMs - lastPrintTimeMs ) > 500 )
     {
         HeaderMatrix_PrintMatrix();
         lastPrintTimeMs = currTimeMs;

@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#define HEADER_MATRIX_NUM_COLS 2
-#define HEADER_MATRIX_NUM_ROWS 2
+#define HEADER_MATRIX_NUM_COLS 8
+#define HEADER_MATRIX_NUM_ROWS 5
 
 #define HEADER_MATRIX_MAX_COLS UINT8_MAX
 #define HEADER_MATRIX_MAX_ROWS 32
@@ -17,7 +17,7 @@
 #endif
 
 extern const uint8_t col_selc_pin_arr[ HEADER_MATRIX_NUM_COLS ];
-extern const uint8_t row_read_pin_arr[ HEADER_MATRIX_NUM_COLS ];
+extern const uint8_t row_read_pin_arr[ HEADER_MATRIX_NUM_ROWS ];
 
 void HeaderMatrix_init();
 

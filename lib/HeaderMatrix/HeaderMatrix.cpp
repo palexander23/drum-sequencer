@@ -2,8 +2,8 @@
 
 #include <Arduino.h>
 
-const pin_size_t col_selc_pin_arr[ HEADER_MATRIX_NUM_COLS ] = { 1, 2 };
-const pin_size_t row_read_pin_arr[ HEADER_MATRIX_NUM_ROWS ] = { 3, 4 };
+const pin_size_t col_selc_pin_arr[ HEADER_MATRIX_NUM_COLS ] = { 14, 1, 2, 3, 4, 5, 15, 6 };
+const pin_size_t row_read_pin_arr[ HEADER_MATRIX_NUM_ROWS ] = { 9, 10, 11, 12, 13 };
 
 /**
  * @brief Initialize all hardware required for the button Matrix
@@ -56,12 +56,9 @@ uint32_t HeaderMatrix_readCol( uint8_t col )
     return col_value;
 }
 
-void HeaderMatrix_readMatrix( uint32_t* matrix ) { }
-
-void HeaderMatrix_PrintMatrix( void )
+void HeaderMatrix_readMatrix( uint32_t matrixArr[ HEADER_MATRIX_NUM_COLS ][ HEADER_MATRIX_NUM_ROWS ] )
 {
     uint32_t currentCol;
-    uint32_t matrixArr[ HEADER_MATRIX_NUM_COLS ][ HEADER_MATRIX_NUM_ROWS ] = { 0 };
 
     int col, row;
     for( col = 0; col < HEADER_MATRIX_NUM_COLS; col++ )
@@ -73,15 +70,25 @@ void HeaderMatrix_PrintMatrix( void )
             matrixArr[ col ][ row ] = bitRead( currentCol, row );
         }
     }
+}
+
+void HeaderMatrix_PrintMatrix( void )
+{
+    int col, row;
+    uint32_t matrixArr[ HEADER_MATRIX_NUM_COLS ][ HEADER_MATRIX_NUM_ROWS ] = { 0 };
+
+    HeaderMatrix_readMatrix( matrixArr );
 
     Serial.println( "---------------" );
-    for( col = 0; col < HEADER_MATRIX_NUM_COLS; col++ )
+
+    for( row = 0; row < HEADER_MATRIX_NUM_ROWS; row++ )
     {
-        for( row = 0; row < HEADER_MATRIX_NUM_ROWS; row++ )
+        for( col = 0; col < HEADER_MATRIX_NUM_COLS; col++ )
         {
-            Serial.printf( "%i, ", matrixArr[ row ][ col ] );
+            Serial.printf( "%i, ", matrixArr[ col ][ row ] );
         }
         Serial.println();
     }
+
     Serial.println( "---------------\n\r" );
 }
