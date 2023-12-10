@@ -50,6 +50,7 @@
 #include "DrumKit.hpp"
 #include "HeaderMatrix.hpp"
 #include "Sequencer.hpp"
+#include "SpeedControl.hpp"
 
 //-----------------------------------------------------------------
 // Constant Definitions
@@ -92,6 +93,7 @@ void setup()
     DrumKit_init();
     HeaderMatrix_init();
     Sequencer_init();
+    SpeedControl_init();
 
     startMozzi();
 

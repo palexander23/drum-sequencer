@@ -17,12 +17,11 @@
 
 #include "DrumKit.hpp"
 #include "HeaderMatrix.hpp"
+#include "SpeedControl.hpp"
 
 //-----------------------------------------------------------------
 // Constant Definitions
 //-----------------------------------------------------------------
-
-#define SEQUENCER_DEFAULT_BEAT_LENGTH_MS 200
 
 #define SEQUENCER_NUM_SEQUENCES 2
 
@@ -50,6 +49,7 @@ void runBeat( void );
 //-----------------------------------------------------------------
 // Local Storage
 //-----------------------------------------------------------------
+
 uint8_t currentBeat;
 uint8_t currentSequence;
 EventDelay beatEventDelay;
@@ -83,8 +83,8 @@ void incrementCurrentSequence( void )
 void printSequenceInfoLine( void )
 {
     Serial.print( "Sequence State \t " );
-    Serial.printf( "currentBeat: {%i}\t", currentBeat );
-    Serial.printf( "currentSequence: {%i}\t", currentSequence );
+    Serial.printf( "currentBeat: %i\t", currentBeat );
+    Serial.printf( "currentSequence: %i\t", currentSequence );
     Serial.println();
 }
 
@@ -118,7 +118,7 @@ void Sequencer_init()
 {
     // Set up the basic sequence parameters
     currentBeat = 0;
-    beatEventDelay.start( SEQUENCER_DEFAULT_BEAT_LENGTH_MS );
+    beatEventDelay.start( 200 );
 }
 
 void Sequencer_run()
@@ -126,7 +126,7 @@ void Sequencer_run()
     if( beatEventDelay.ready() )
     {
         runBeat();
-        beatEventDelay.start();
+        beatEventDelay.start( SpeedControl_getBeatLen_ms() );
     }
 }
 
