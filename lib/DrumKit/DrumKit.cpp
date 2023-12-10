@@ -119,8 +119,8 @@ void DrumKit_play( drum_t drum )
         aBD.start();
         break;
     case SNARE:
-        break;
         aSD.start();
+        break;
     case HHATC:
         aCH.start();
         break;
