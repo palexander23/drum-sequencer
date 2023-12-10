@@ -91,7 +91,7 @@ void setup()
 
     DrumKit_init();
     HeaderMatrix_init();
-    Sequencer_run();
+    Sequencer_init();
 
     startMozzi();
 

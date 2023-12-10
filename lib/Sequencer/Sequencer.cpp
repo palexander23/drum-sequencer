@@ -10,7 +10,10 @@
 
 #include "Sequencer.hpp"
 
+#include <MozziGuts.h>
+
 #include <Arduino.h>
+#include <EventDelay.h>
 
 #include "HeaderMatrix.hpp"
 
@@ -18,7 +21,9 @@
 // Constant Definitions
 //-----------------------------------------------------------------
 
-// None
+#define SEQUENCER_DEFAULT_BEAT_LENGTH_MS 100
+
+#define SEQUENCER_NUM_SEQUENCES 2
 
 //-----------------------------------------------------------------
 // Type Definitions
@@ -30,7 +35,20 @@
 // Private Function Prototypes
 //-----------------------------------------------------------------
 
-// None
+void incrementCurrentBeat( void );
+
+void incrementCurrentSequence( void );
+
+void printSequenceInfoLine( void );
+
+void runBeat( void );
+
+//-----------------------------------------------------------------
+// Local Storage
+//-----------------------------------------------------------------
+uint8_t currentBeat;
+uint8_t currentSequence;
+EventDelay beatEventDelay;
 
 //=================================================================
 //-----------------------------------------------------------------
@@ -38,7 +56,40 @@
 //-----------------------------------------------------------------
 //=================================================================
 
-// None
+void incrementCurrentBeat( void )
+{
+    currentBeat++;
+    if( currentBeat >= HEADER_MATRIX_NUM_COLS )
+    {
+        currentBeat = 0;
+        incrementCurrentSequence();
+    }
+}
+
+void incrementCurrentSequence( void )
+{
+    currentSequence++;
+
+    if( currentSequence >= SEQUENCER_NUM_SEQUENCES )
+    {
+        currentSequence = 0;
+    }
+}
+
+void printSequenceInfoLine( void )
+{
+    Serial.print( "Sequence State \t " );
+    Serial.printf( "currentBeat: {%i}\t", currentBeat );
+    Serial.printf( "currentSequence: {%i}\t", currentSequence );
+    Serial.println();
+}
+
+void runBeat( void )
+{
+    printSequenceInfoLine();
+
+    incrementCurrentBeat();
+}
 
 //=================================================================
 //-----------------------------------------------------------------
@@ -48,17 +99,17 @@
 
 void Sequencer_init()
 {
+    // Set up the basic sequence parameters
+    currentBeat = 0;
+    beatEventDelay.start( SEQUENCER_DEFAULT_BEAT_LENGTH_MS );
 }
 
 void Sequencer_run()
 {
-    static uint32_t lastPrintTimeMs = 0;
-    uint32_t currTimeMs = millis();
-
-    if( ( currTimeMs - lastPrintTimeMs ) > 500 )
+    if( beatEventDelay.ready() )
     {
-        HeaderMatrix_PrintMatrix();
-        lastPrintTimeMs = currTimeMs;
+        runBeat();
+        beatEventDelay.start();
     }
 }
 

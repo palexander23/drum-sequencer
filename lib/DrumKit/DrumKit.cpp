@@ -53,11 +53,18 @@
 #define OUTPUTSCALING 9
 
 #define D_NUM 4
-#define D_BD 0
+#define DRUMKIT_BASS_DRUM 0
 #define D_SD 1
 #define D_CH 2
 #define D_OH 3
-const int d_pins[ D_NUM ] = { D_BD, D_SD, D_OH, D_CH };
+
+typedef enum
+{
+    BASSD = 0,
+    SNARE = 1,
+    HHATC = 2,
+    HHATO = 3,
+} drum_t;
 
 //-----------------------------------------------------------------
 // Type Definitions
@@ -112,20 +119,20 @@ int16_t DrumKit_updateAudio( void )
     return MonoOutput::fromNBit( OUTPUTSCALING, d_sample );
 }
 
-void DrumKit_play( int drum )
+void DrumKit_play( drum_t drum )
 {
     switch( drum )
     {
-    case D_BD:
+    case BASSD:
         aBD.start();
         break;
-    case D_SD:
+    case SNARE:
         break;
         aSD.start();
-    case D_CH:
+    case HHATC:
         aCH.start();
         break;
-    case D_OH:
+    case HHATO:
         aOH.start();
         break;
     }

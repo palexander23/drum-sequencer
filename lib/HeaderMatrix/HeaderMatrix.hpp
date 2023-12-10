@@ -35,6 +35,12 @@
 extern const uint8_t col_selc_pin_arr[ HEADER_MATRIX_NUM_COLS ];
 extern const uint8_t row_read_pin_arr[ HEADER_MATRIX_NUM_ROWS ];
 
+#define BASSD_1_ROW 0
+#define SNARE_1_ROW 1
+#define HIHAT_1_ROW 2
+#define CRASH_1_ROW 3
+#define BASSD_2_ROW 4
+
 //-----------------------------------------------------------------
 // Type Definitions
 //-----------------------------------------------------------------
