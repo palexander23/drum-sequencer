@@ -25,8 +25,16 @@
 
 #define SEQUENCER_NUM_SEQUENCES 2
 
-#define SEQUENCER_SEQUENCE_1_LAST_ROW 4
-#define SEQUENCER_SEQUENCE_2_LAST_ROW 5
+#define SEQUENCER_SEQUENCE_0_LAST_ROW 4
+#define SEQUENCER_SEQUENCE_1_LAST_ROW 5
+
+const drum_t drum_row_sounds_arr[ HEADER_MATRIX_NUM_ROWS ] {
+    BASSD,
+    SNARE,
+    HHATC,
+    HHATO,
+    SNARE,
+};
 
 //-----------------------------------------------------------------
 // Type Definitions
@@ -94,8 +102,18 @@ void runBeat( void )
 
     uint32_t currBeatHeaderSettings = HeaderMatrix_readCol( currentBeat );
 
+    uint32_t lastRow;
+    if( currentSequence == 0 )
+    {
+        lastRow = SEQUENCER_SEQUENCE_0_LAST_ROW;
+    }
+    else if( currentSequence == 1 )
+    {
+        lastRow = SEQUENCER_SEQUENCE_1_LAST_ROW;
+    }
+
     int drumRow;
-    for( drumRow = 0; drumRow < SEQUENCER_SEQUENCE_1_LAST_ROW; drumRow++ )
+    for( drumRow = 0; drumRow < lastRow; drumRow++ )
     {
         bool drumSet = bitRead( currBeatHeaderSettings, drumRow );
 
